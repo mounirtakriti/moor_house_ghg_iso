@@ -1,4 +1,4 @@
-# moor_house_ghg_iso
+# Moor House greenhouse gas flux and stable isotope analysis
 This repository contains R scripts for the analysis of greenhouse gas fluxes, stable isotope and auxiliary data collected at Moor House National Nature Reserve, UK.
 
 Primary data from Moor House are available at: https://doi.org/10.5281/ZENODO.18391367 
