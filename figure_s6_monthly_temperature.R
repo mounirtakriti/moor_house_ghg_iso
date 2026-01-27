@@ -68,6 +68,8 @@ mm_soil_temp <- monthly_temp %>%
 
 pdf("Figure_S6_monthly_temperature.pdf", width = 8, height = 7)
 mm_air_temp / mm_soil_temp +
+  plot_annotation(tag_levels = "a") +
   plot_layout(guides = "collect") &
   theme(legend.position = "bottom")
 dev.off()
+
