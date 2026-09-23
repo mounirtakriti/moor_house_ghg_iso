@@ -11,7 +11,7 @@ source("setup.R")
 
 # Figure S5 -----------------------------------------------------------------------------------
 
- soil_moisture <- sensors %>% 
+ soil_moisture <- hydrology %>% 
    ggplot(aes(x = Timestamp, y = Soil_moist_18cm, colour = "18 cm")) +
    geom_line() +
    geom_line(aes(y = Soil_moist_7cm, colour = "  7 cm")) +
