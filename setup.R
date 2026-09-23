@@ -42,6 +42,7 @@ ecn_ss <- read_csv("ECN_SS1.csv")  # ECN soil solution data, check file names
 
 fluxes$Date <- as.Date(fluxes$Timestamp)
 fluxes$Chamber <- as.factor(fluxes$Chamber)
+isotopes$Chamber <- as.factor(isotopes$Chamber)
 fluxes$ihsCH4_flux <- ihs(fluxes$CH4_flux)
 fluxes$ihsCO2_flux <- ihs(fluxes$CO2_flux)
 
@@ -161,6 +162,16 @@ joined_data <- left_join(hydrology, left_join(ecn_ma, ecn_ss)) %>%
 
 joined_data <- left_join(joined_data, fluxes)
 
+iso_flux <- left_join(isotopes, fluxes) %>% 
+  filter(!is.na(CH4_flux))
+
+iso_flux <- iso_flux %>% 
+  group_by(Date) %>% 
+  mutate(
+         Mean_ihsCH4_flux_13C = mean(ihsCH4_flux[!is.na(d13CVPDB)]),
+         Mean_ihsCH4_flux_2H = mean(ihsCH4_flux[!is.na(d2HVSMOW)])
+         )
+
 iso_joined_data <- joined_data %>% 
   group_by(Date) %>% 
   mutate(Mean_ihsCH4_flux = mean(ihsCH4_flux, na.rm = TRUE),
@@ -168,8 +179,12 @@ iso_joined_data <- joined_data %>%
   left_join(isotope_models) %>% 
   slice(1) %>% 
   filter(!is.na(Slope_d13C | !is.na(Slope_d2H))) %>% 
-  ungroup()
-
+  ungroup() %>% 
+  left_join(iso_flux %>% 
+              select(Date,
+                     Mean_ihsCH4_flux_13C,
+                     Mean_ihsCH4_flux_2H) %>% 
+              slice(1))
 
 
 
@@ -195,4 +210,3 @@ scale_y_flux <- scale_y_continuous(trans ='asinh', breaks=c(-1, 0, 1, 10, 100, 1
 vert_x_axis <- theme(axis.text.x = element_text(angle = 90,
                                                    vjust = 0.5,
                                                    hjust = 1))
-
