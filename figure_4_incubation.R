@@ -9,6 +9,19 @@ source("setup.R")
 
 
 
+# Mean fluxes -------------------------------------------------------------
+
+incubation_mean <- incubation %>% 
+  group_by(
+    Production_Oxidation,
+    Depth,
+    Date
+    ) %>% 
+  summarise(Flux = mean(Flux, na.rm = TRUE))
+
+
+
+
 # Figure 4 ------------------------------------------------------------------------------------
 
 theme_incubation <- theme(legend.title = element_text(size=14),
@@ -23,6 +36,9 @@ theme_incubation <- theme(legend.title = element_text(size=14),
 incubation_production <- incubation %>% 
   filter(Production_Oxidation == "P") %>% 
   ggplot(aes(x = Flux, y = Depth)) +
+  geom_vline(xintercept = 0, colour = "gray40", linewidth = 0.1) +
+  geom_path(data = filter(incubation_mean, Production_Oxidation == "P"),
+            aes(x = Flux, y = Depth), colour = "red") +
   geom_point() +
   scale_x_continuous(trans ='asinh', breaks=c(0, 1, 10, 100)) +
   scale_y_reverse(limits = c(100, 0), breaks=c(0, 25, 50, 75, 100), expand = c(0, 0)) +
@@ -36,6 +52,9 @@ incubation_production <- incubation %>%
 incubation_oxidation <- incubation %>% 
   filter(Production_Oxidation == "O") %>%
   ggplot(aes(x = Flux, y = Depth)) +
+  geom_vline(xintercept = 0, colour = "gray40", linewidth = 0.1) +
+  geom_path(data = filter(incubation_mean, Production_Oxidation == "O"),
+            aes(x = Flux, y = Depth), colour = "blue") +
   geom_point() +
   scale_y_reverse(limits = c(100, 0), breaks=c(0, 25, 50, 75, 100), expand = c(0, 0)) +
   facet_grid(. ~ Date, labeller = labeller(Date = function(x) format(as.Date(x), "%b-%d"))) +
